@@ -3,13 +3,13 @@ import {
 } from "react-native";
 
 import { Stack, useRouter, useSearchParams } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Company, JobAbout, JobFooter, JobTabs, ScreenHeaderBtn, Specifics } from "../../components";
 import { COLORS, icons, SIZES } from '../../constants'
 import useFetch from "../../hook/useFetch";
 
-const tabs = ["About", "Qualifications", "Responsibilites"]
+const tabs = ["About", "Qualifications", "Responsibilities"]
 
 function JobDetails() {
 
@@ -20,9 +20,14 @@ function JobDetails() {
         job_id: params.id,
     })
 
+
     const [refreshing, setRefreshing] = useState(false);
 
-    const onRefresh = () => { };
+    const onRefresh = () => useCallback(() => {
+        setRefreshing(true)
+        refetch()
+        setRefreshing(false)
+    }, []);
 
     const [activeTab, setActiveTab] = useState(tabs[0])
 
@@ -48,6 +53,9 @@ function JobDetails() {
         }
     }
 
+    useEffect(() => {
+        console.log(data[0])
+    }, [])
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
@@ -102,6 +110,7 @@ function JobDetails() {
                     )}
 
                 </ScrollView>
+                <JobFooter url={data[0]?.job_google_link ?? 'https://careers.google.com/jobs/results'} />
             </>
         </SafeAreaView>
     )
